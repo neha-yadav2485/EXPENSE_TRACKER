@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spendly — Expense Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+ 
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">💳</div>
+    <div class="brand-name">Spendly</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-lbl">Overview</div>
+      <button class="nav-btn active" onclick="navigateTo('dashboard', this)">
+      <span class="nav-ico">📊</span>Dashboard
+      </button>
+      <button class="nav-btn" onclick="navigateTo('transactions', this)">
+      <span class="nav-ico">💸</span>Transactions
+      <span class="nav-badge" id="navBadge">0</span>
+      </button>
+      <button class="nav-btn" onclick="navigateTo('budgets', this)">
+      <span class="nav-ico">🎯</span>Budgets
+      </button>
+      <button class="nav-btn" onclick="navigateTo('reports', this)">
+      <span class="nav-ico">📈</span>Reports
+      </button>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-lbl">Account</div>
+    <button class="nav-btn" onclick="navigateTo('alerts', this)">
+      <span class="nav-ico">🔔</span>Alerts
+    </button>
+    <button class="nav-btn" onclick="navigateTo('settings', this)">
+      <span class="nav-ico">⚙️</span>Settings
+    </button>
+  </div>
+  <div class="sidebar-user">
+    <div class="user-av">YN</div>
+    <div>
+      <div class="user-name">Your Name</div>
+      <div class="user-plan">Free Plan</div>
+    </div>
+  </div>
+</aside>
+ 
+<main class="main" id="mainContent">
+  <div class="topbar" id="dashboardSection">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub">Track your money, own your future</div>
+    </div>
+    <div class="topbar-right">
+      <select class="ctrl" id="monthFilter" onchange="render()">
+        <option value="all">All Time</option>
+        <option value="0">January</option><option value="1">February</option>
+        <option value="2">March</option><option value="3" selected>April</option>
+        <option value="4">May</option><option value="5">June</option>
+        <option value="6">July</option><option value="7">August</option>
+        <option value="8">September</option><option value="9">October</option>
+        <option value="10">November</option><option value="11">December</option>
+      </select>
+      <button class="btn btn-ghost" onclick="clearAll()">Clear All</button>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Entry</button>
+    </div>
+  </div>
+ 
+  <div class="cards-row">
+    <div class="card"><div class="card-glow" style="background:var(--p)"></div><div class="card-lbl">Net Balance</div><div class="card-val" id="cBal">₹0</div><div class="card-note">income − expenses</div></div>
+    <div class="card"><div class="card-glow" style="background:var(--r)"></div><div class="card-lbl">Total Expenses</div><div class="card-val" id="cExp" style="color:var(--r)">₹0</div><div class="card-note" id="cExpN">0 entries</div></div>
+    <div class="card"><div class="card-glow" style="background:var(--g)"></div><div class="card-lbl">Total Income</div><div class="card-val" id="cInc" style="color:var(--g)">₹0</div><div class="card-note" id="cIncN">0 entries</div></div>
+    <div class="card"><div class="card-glow" style="background:var(--y)"></div><div class="card-lbl">Savings Rate</div><div class="card-val" id="cSav" style="color:var(--y)">0%</div><div class="card-note">of total income</div></div>
+  </div>
+ 
+  <div class="row2" id="reportsSection">
+    <div class="panel">
+      <div class="panel-hd"><div class="panel-title">Spending Breakdown</div><button class="panel-link">Details</button></div>
+      <div class="donut-wrap">
+        <svg id="donutSvg" width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0"></svg>
+        <div class="legend" id="donutLeg"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-hd">
+        <div class="panel-title">Monthly Overview</div>
+        <div style="display:flex;gap:12px;font-size:11px;align-items:center">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--p);display:inline-block"></span>Expense</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--g);display:inline-block"></span>Income</span>
+        </div>
+      </div>
+      <div class="bar-chart-area" id="barChart"></div>
+    </div>
+  </div>
+ 
+  <div class="panel">
+    <div class="panel-hd"><div class="panel-title">Top Categories</div><button class="panel-link" onclick="openModal()">+ Add Entry</button></div>
+    <div class="spend-grid" id="topCats"></div>
+  </div>
+ 
+  <div class="row3">
+    <div class="panel" id="transactionsSection">
+      <div class="panel-hd"><div class="panel-title">Transactions</div><button class="panel-link" id="viewAllBtn" onclick="toggleAll()">View all</button></div>
+      <div class="tx-stack" id="txList"></div>
+    </div>
+    <div class="panel" id="budgetsSection">
+      <div class="panel-hd"><div class="panel-title">Budget Status</div><button class="panel-link" onclick="openBudgetModal()">Edit limits</button></div>
+      <div class="budget-stack" id="budgetBars"></div>
+    </div>
+  </div>
+</main>
+ 
+<!-- ADD/EDIT MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modalBox">
+    <div class="modal-title" id="modalTitle">New Entry</div>
+    <div class="field">
+      <label>Type</label>
+      <div class="type-row">
+        <button class="type-opt sel-e" id="tExp" onclick="selType('expense')">📤 Expense</button>
+        <button class="type-opt" id="tInc" onclick="selType('income')">📥 Income</button>
+      </div>
+    </div>
+    <div class="field"><label>Description</label><input type="text" id="fDesc" placeholder="e.g. Lunch, Salary, EMI..."></div>
+    <div class="field"><label>Amount (₹)</label><input type="number" id="fAmt" placeholder="0" min="1" step="1"></div>
+    <div class="field">
+      <label>Category</label>
+      <select id="fCat">
+        <option>🍔 Food</option><option>🚗 Transport</option><option>🏥 Health</option>
+        <option>🎮 Entertainment</option><option>🛍️ Shopping</option><option>💡 Utilities</option>
+        <option>📚 Education</option><option>✈️ Travel</option><option>💼 Salary</option>
+        <option>💹 Investment</option><option>🎁 Gift</option><option>📦 Other</option>
+      </select>
+    </div>
+    <div class="field"><label>Date</label><input type="date" id="fDate"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- BUDGET MODAL -->
+<div class="overlay" id="budgetOverlay">
+  <div class="modal">
+    <div class="modal-title">Set Budget Limits</div>
+    <div id="budgetFields"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeBudgetModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBudgets()">Save</button>
+    </div>
+  </div>
+</div>
+ 
+<script src="script.js"></script>
+</body>
+</html>
