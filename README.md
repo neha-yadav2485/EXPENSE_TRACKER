@@ -48,8 +48,8 @@ It provides a clean and user-friendly interface where users can add and remove t
 ## 📸 Preview
 
 <p align="center">
-  <img src="EXPENSE TRACKER PREVIEW 1.png" alt="Expense Tracker Preview 1" width="300"/>
-  <img src="EXPENSE TRACKER PREVIEW 2.png" alt="Expense Tracker Preview 2" width="300"/>
+  <img src="image_1.png" alt="Expense Tracker Preview 1" width="300"/>
+  <img src="image_2.png" alt="Expense Tracker Preview 2" width="300"/>
 </p>
 
 ---
